@@ -22,6 +22,30 @@ export const api = {
         400: errorSchemas.validation,
       },
     },
+    list: {
+      method: 'GET' as const,
+      path: '/api/registrations',
+      responses: {
+        200: z.array(z.custom<typeof registrations.$inferSelect>()),
+      },
+    },
+    get: {
+      method: 'GET' as const,
+      path: '/api/registrations/:id',
+      responses: {
+        200: z.custom<typeof registrations.$inferSelect>(),
+        404: errorSchemas.internal,
+      },
+    },
+    stats: {
+      method: 'GET' as const,
+      path: '/api/registrations/stats',
+      responses: {
+        200: z.object({
+          total: z.number(),
+        }),
+      },
+    },
   },
 };
 
