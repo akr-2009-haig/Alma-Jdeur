@@ -4,7 +4,7 @@ import {
   type InsertRegistration,
   type Registration
 } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 
 export interface IStorage {
   createRegistration(registration: InsertRegistration): Promise<Registration>;
@@ -38,10 +38,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getRegistrationsCount(): Promise<number> {
-    const result = await db
-      .select()
+    const [result] = await db
+      .select({ count: sql<number>`count(*)` })
       .from(registrations);
-    return result.length;
+    return Number(result.count);
   }
 }
 

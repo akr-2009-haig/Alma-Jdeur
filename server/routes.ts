@@ -31,7 +31,9 @@ export async function registerRoutes(
       const registrations = await storage.getRegistrations();
       res.status(200).json(registrations);
     } catch (err) {
-      throw err;
+      res.status(500).json({
+        message: "Failed to retrieve registrations",
+      });
     }
   });
 
@@ -41,7 +43,9 @@ export async function registerRoutes(
       const total = await storage.getRegistrationsCount();
       res.status(200).json({ total });
     } catch (err) {
-      throw err;
+      res.status(500).json({
+        message: "Failed to retrieve statistics",
+      });
     }
   });
 
@@ -64,7 +68,9 @@ export async function registerRoutes(
       
       res.status(200).json(registration);
     } catch (err) {
-      throw err;
+      res.status(500).json({
+        message: "Failed to retrieve registration",
+      });
     }
   });
 
