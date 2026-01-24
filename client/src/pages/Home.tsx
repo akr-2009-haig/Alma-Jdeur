@@ -3,6 +3,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Hero } from "@/components/home/Hero";
 import { About } from "@/components/home/About";
 import { Services } from "@/components/home/Services";
+import { FAQ } from "@/components/home/FAQ";
 import { RegistrationForm } from "@/components/home/RegistrationForm";
 import { AlertCircle } from "lucide-react";
 
@@ -26,6 +27,7 @@ export default function Home() {
 
         <About />
         <Services />
+        <FAQ />
         <RegistrationForm />
       </main>
 
