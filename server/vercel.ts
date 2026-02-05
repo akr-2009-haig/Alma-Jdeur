@@ -4,6 +4,8 @@ import { serveStatic } from "./static";
 import { createServer } from "http";
 
 const app = express();
+// httpServer is required by registerRoutes even in serverless context
+// registerRoutes expects it as a parameter and returns it
 const httpServer = createServer(app);
 
 declare module "http" {
@@ -71,7 +73,6 @@ async function initializeApp() {
       const message = err.message || "Internal Server Error";
 
       res.status(status).json({ message });
-      throw err;
     });
 
     // For production/Vercel, serve static files

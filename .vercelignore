@@ -4,4 +4,3 @@ node_modules
 *.tar.gz
 .replit
 check_project.sh
-dist
