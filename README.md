@@ -217,6 +217,50 @@ SESSION_SECRET=your-random-secret-key
 NODE_ENV=production
 ```
 
+## Native Mobile App (APK Build)
+
+The project is now fully configured for native Android APK compilation using **Capacitor**.
+
+### Quick Start for APK Build
+```bash
+# Install dependencies
+npm install
+
+# Build web project
+npm run build
+
+# Sync with Capacitor
+npm run cap:sync
+
+# Build APK (debug)
+npm run cap:build:android
+```
+
+### Available Commands
+- `npm run cap:sync` - Sync web changes to native platforms
+- `npm run cap:open:android` - Open project in Android Studio
+- `npm run cap:build:android` - Build debug APK
+- `npm run cap:build:android:release` - Build release APK
+- `npm run android:clean` - Clean Android build
+
+### Configuration Files
+- **app.json** - Mobile app configuration with app ID and name
+- **capacitor.config.ts** - Capacitor configuration for native platforms
+- **android/** - Complete Android project structure
+
+### Documentation
+- 📖 [QUICK_START_APK.md](./QUICK_START_APK.md) - Quick guide in Arabic/English
+- 📖 [APK_BUILD_GUIDE.md](./APK_BUILD_GUIDE.md) - Complete APK build documentation
+
+### Requirements for APK Build
+- Java JDK 17+
+- Android SDK (API 22+)
+- Gradle (included in Android project)
+
+### Output Location
+Debug APK: `android/app/build/outputs/apk/debug/app-debug.apk`
+Release APK: `android/app/build/outputs/apk/release/app-release.apk`
+
 ## Smart Suggestions
 
 The system includes smart suggestions for:
