@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 import { useActiveCasesList, usePatientAdmission, useAuthenticatedSurgeon } from '@/lib/hospitalAPI';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -56,7 +56,7 @@ const sortPatientsByDateDescending = (patientsList: any[]) => {
 };
 
 export default function CasesManagementPage() {
-  const routerNavigate = useNavigate();
+  const [, routerNavigate] = useLocation();
   const { toast } = useToast();
   const { data: currentUserData } = useAuthenticatedSurgeon();
   const { data: allActivePatients, isLoading: patientsLoadingState, error: patientsLoadError } = useActiveCasesList();

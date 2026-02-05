@@ -1,4 +1,4 @@
-import { useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 import { useActiveCasesList, useDashboardMetrics, useAuthenticatedSurgeon, useAnnouncementsList } from '@/lib/hospitalAPI';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,7 +40,7 @@ const processPatientRecordsForActivity = (patientArray: any[]) => {
 };
 
 export default function MainControlPanel() {
-  const routerNavigate = useNavigate();
+  const [, routerNavigate] = useLocation();
   const { data: authenticatedDoctor } = useAuthenticatedSurgeon();
   const { data: dashboardMetricsData, isLoading: metricsLoadingStatus, error: metricsErrorState } = useDashboardMetrics();
   const { data: activePatientRecords, isLoading: patientsLoadingStatus } = useActiveCasesList();

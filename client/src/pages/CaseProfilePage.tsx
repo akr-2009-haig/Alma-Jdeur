@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, useNavigate } from 'wouter';
+import { useParams, useLocation } from 'wouter';
 import {
   usePatientDetails,
   usePatientNotesList,
@@ -52,7 +52,7 @@ const formatTimestampToArabic = (timestamp: string) => {
 export default function CaseProfilePage() {
   const { id } = useParams();
   const patientIdentifier = parseInt(id as string);
-  const navigateRouter = useNavigate();
+  const [, navigateRouter] = useLocation();
   const { toast } = useToast();
   const { data: authenticatedUser } = useAuthenticatedSurgeon();
 
