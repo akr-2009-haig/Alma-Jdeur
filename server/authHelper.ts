@@ -19,10 +19,15 @@ class PasswordSecurityManager {
 
 export const passwordManager = new PasswordSecurityManager();
 
-// Session user type extension
-declare module 'express-session' {
-  interface SessionData {
-    surgeonInfo?: User;
+// Extend express request with session
+declare global {
+  namespace Express {
+    interface Request {
+      session: {
+        surgeonInfo?: User;
+        destroy: (callback: (err?: any) => void) => void;
+      };
+    }
   }
 }
 

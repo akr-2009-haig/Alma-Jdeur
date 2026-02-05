@@ -184,7 +184,7 @@ export const hospitalAPI = new HospitalAPIClient();
 
 // Custom React hooks with unique patterns
 export function useAuthenticatedSurgeon() {
-  return useQuery({
+  return useQuery<any>({
     queryKey: ['currentSurgeon'],
     queryFn: () => hospitalAPI.fetchCurrentSurgeon(),
     retry: false,
@@ -237,21 +237,21 @@ export function usePatientAdmission() {
 }
 
 export function usePatientsList() {
-  return useQuery({
+  return useQuery<any[]>({
     queryKey: ['patients'],
     queryFn: () => hospitalAPI.retrieveAllPatients(),
   });
 }
 
 export function useActiveCasesList() {
-  return useQuery({
+  return useQuery<any[]>({
     queryKey: ['activePatients'],
     queryFn: () => hospitalAPI.retrieveActivePatients(),
   });
 }
 
 export function usePatientDetails(patientId: number | null) {
-  return useQuery({
+  return useQuery<any>({
     queryKey: ['patientDetails', patientId],
     queryFn: () => hospitalAPI.retrievePatientDetails(patientId!),
     enabled: !!patientId,
@@ -289,15 +289,15 @@ export function useMedicalNoteCreation() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: hospitalAPI.addMedicalNote.bind(hospitalAPI),
-    onSuccess: (_, variables) => {
+    mutationFn: (noteData: any) => hospitalAPI.addMedicalNote(noteData),
+    onSuccess: (_, variables: any) => {
       queryClient.invalidateQueries({ queryKey: ['patientNotes', variables.patientId] });
     },
   });
 }
 
 export function usePatientNotesList(patientId: number | null) {
-  return useQuery({
+  return useQuery<any[]>({
     queryKey: ['patientNotes', patientId],
     queryFn: () => hospitalAPI.retrievePatientNotes(patientId!),
     enabled: !!patientId,
@@ -308,15 +308,15 @@ export function useMedicalDocumentUpload() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: hospitalAPI.uploadMedicalDocument.bind(hospitalAPI),
-    onSuccess: (_, variables) => {
+    mutationFn: (fileData: any) => hospitalAPI.uploadMedicalDocument(fileData),
+    onSuccess: (_, variables: any) => {
       queryClient.invalidateQueries({ queryKey: ['patientDocuments', variables.patientId] });
     },
   });
 }
 
 export function usePatientDocumentsList(patientId: number | null) {
-  return useQuery({
+  return useQuery<any[]>({
     queryKey: ['patientDocuments', patientId],
     queryFn: () => hospitalAPI.retrievePatientDocuments(patientId!),
     enabled: !!patientId,
@@ -324,14 +324,14 @@ export function usePatientDocumentsList(patientId: number | null) {
 }
 
 export function useArchivedCasesList() {
-  return useQuery({
+  return useQuery<any[]>({
     queryKey: ['archive'],
     queryFn: () => hospitalAPI.retrieveArchivedCases(),
   });
 }
 
 export function useAnnouncementsList() {
-  return useQuery({
+  return useQuery<any[]>({
     queryKey: ['announcements'],
     queryFn: () => hospitalAPI.retrieveAllAnnouncements(),
   });
@@ -372,7 +372,7 @@ export function useAnnouncementRemoval() {
 }
 
 export function useDiscussionsList(newsId: number | null) {
-  return useQuery({
+  return useQuery<any[]>({
     queryKey: ['discussions', newsId],
     queryFn: () => hospitalAPI.retrieveAnnouncementDiscussions(newsId!),
     enabled: !!newsId,
@@ -383,22 +383,22 @@ export function useDiscussionPosting() {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: hospitalAPI.addDiscussionPost.bind(hospitalAPI),
-    onSuccess: (_, variables) => {
+    mutationFn: (discussionData: any) => hospitalAPI.addDiscussionPost(discussionData),
+    onSuccess: (_, variables: any) => {
       queryClient.invalidateQueries({ queryKey: ['discussions', variables.newsId] });
     },
   });
 }
 
 export function useDashboardMetrics() {
-  return useQuery({
+  return useQuery<any>({
     queryKey: ['dashboardMetrics'],
     queryFn: () => hospitalAPI.retrieveDashboardMetrics(),
   });
 }
 
 export function useSurgeonsList() {
-  return useQuery({
+  return useQuery<any[]>({
     queryKey: ['surgeons'],
     queryFn: () => hospitalAPI.retrieveAllSurgeons(),
   });

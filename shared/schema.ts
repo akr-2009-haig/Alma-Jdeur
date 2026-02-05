@@ -119,6 +119,12 @@ export const insertPatientSchema = createInsertSchema(patients).omit({
   status: true,
 });
 
+export const updatePatientSchema = createInsertSchema(patients).partial().omit({ 
+  id: true, 
+  createdAt: true,
+  updatedAt: true,
+});
+
 export const insertFollowupSchema = createInsertSchema(followups).omit({ 
   id: true, 
   createdAt: true 
