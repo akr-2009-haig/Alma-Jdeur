@@ -1,10 +1,16 @@
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
 
 const app = express();
 const httpServer = createServer(app);
+
+// Trust proxy for production environments
+if (process.env.NODE_ENV === "production") {
+  app.set("trust proxy", 1);
+}
 
 declare module "http" {
   interface IncomingMessage {
@@ -21,6 +27,26 @@ app.use(
 );
 
 app.use(express.urlencoded({ extended: false }));
+
+// Validate SESSION_SECRET in production
+if (process.env.NODE_ENV === "production" && !process.env.SESSION_SECRET) {
+  console.error("ERROR: SESSION_SECRET environment variable must be set in production!");
+  throw new Error("SESSION_SECRET is required in production");
+}
+
+// Configure session middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "fallback-secret-key-for-development-only",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
 export function log(message: string, source = "express") {
   const formattedTime = new Date().toLocaleTimeString("en-US", {
