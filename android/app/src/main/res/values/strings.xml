@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">نظام الجراحة العامة</string>
+    <string name="title_activity_main">نظام الجراحة العامة</string>
+    <string name="package_name">com.benisuef.hospital.surgery</string>
+    <string name="custom_url_scheme">com.benisuef.hospital.surgery</string>
+</resources>
