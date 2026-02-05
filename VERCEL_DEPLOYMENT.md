@@ -16,9 +16,15 @@ Set the following environment variables in your Vercel project settings:
 
 ### Database
 - `DATABASE_URL` - PostgreSQL connection string (e.g., `postgresql://user:password@host:5432/dbname`)
+  - **Important**: Use Vercel Postgres or ensure your database accepts connections from Vercel's IP addresses
+
+### Session (Required)
+- `SESSION_SECRET` - A random secret string for session encryption
+  - Generate one with: `openssl rand -base64 32`
+  - Or use: https://generate-secret.vercel.app/32
 
 ### Application
-- `NODE_ENV` - Set to `production`
+- `NODE_ENV` - Automatically set to `production` by Vercel (no need to configure)
 - `PORT` - Automatically set by Vercel (no need to configure)
 
 ## Deployment Steps
@@ -33,9 +39,16 @@ Set the following environment variables in your Vercel project settings:
 ### 2. Configure Build Settings
 
 The project includes a `vercel.json` file that configures:
-- Build command: `npm run build`
-- Server entry point: `dist/index.cjs`
-- Static files: `dist/public/`
+- Build command: `npm run vercel-build` (which runs `npm run build`)
+- Serverless function entry: `server/vercel.ts`
+- Static files directory: `dist/public/`
+- Routes: All requests are routed to the serverless function which handles both API and static files
+
+**Build Configuration:**
+- Framework Preset: Other (custom configuration)
+- Build Command: `npm run vercel-build` (automatically detected)
+- Output Directory: Auto-detected from vercel.json
+- Install Command: `npm install` (default)
 
 ### 3. Add Environment Variables
 
@@ -71,9 +84,46 @@ After deployment, you need to initialize your database:
 ## Important Notes
 
 1. **Database Connection**: Make sure your PostgreSQL database is accessible from Vercel's servers
-2. **Session Storage**: The current implementation uses in-memory session storage. For production on Vercel, consider using a database-backed session store
+2. **Session Storage**: The current implementation uses in-memory session storage (`memorystore`). For production on Vercel with multiple serverless instances:
+   - Consider using `connect-pg-simple` (already installed) to store sessions in PostgreSQL
+   - Or use an external session store like Redis
+   - In-memory sessions will work but may cause users to be logged out when serverless functions scale
 3. **Build Time**: Initial build may take 2-3 minutes
-4. **Cold Starts**: Serverless functions may have cold start delays
+4. **Cold Starts**: Serverless functions may have cold start delays on first request
+5. **Database Migrations**: Run `npm run db:push` locally or from Vercel CLI to initialize/update the database schema
+
+## Session Store Configuration (Recommended for Production)
+
+To use PostgreSQL-backed sessions instead of in-memory storage:
+
+1. Update `server/routes.ts` to use `connect-pg-simple`:
+
+```typescript
+import connectPgSimple from 'connect-pg-simple';
+import session from 'express-session';
+import pg from 'pg';
+
+const PgSession = connectPgSimple(session);
+const pgPool = new pg.Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+app.use(session({
+  store: new PgSession({
+    pool: pgPool,
+    tableName: 'session'
+  }),
+  secret: process.env.SESSION_SECRET || 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: process.env.NODE_ENV === 'production',
+    maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+  }
+}));
+```
+
+2. Create the session table in your database (connect-pg-simple will do this automatically)
 
 ## Troubleshooting
 
