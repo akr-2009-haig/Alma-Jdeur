@@ -202,9 +202,18 @@ npm run build
 npm start
 ```
 
+### Vercel Deployment
+For detailed instructions on deploying to Vercel, see [VERCEL_DEPLOYMENT.md](./VERCEL_DEPLOYMENT.md)
+
+Quick steps:
+1. Connect your repository to Vercel
+2. Set environment variables (DATABASE_URL, SESSION_SECRET)
+3. Deploy - Vercel will automatically build and deploy the app
+
 ### Environment Variables
 ```
 DATABASE_URL=postgresql://user:password@localhost:5432/hospital
+SESSION_SECRET=your-random-secret-key
 NODE_ENV=production
 ```
 
