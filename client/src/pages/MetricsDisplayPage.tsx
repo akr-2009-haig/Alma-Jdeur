@@ -88,10 +88,6 @@ export default function MetricsDisplayPage() {
             <Activity className="w-6 h-6 text-blue-600" />
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-blue-600">
-          <TrendingUp className="w-3 h-3" />
-          <span>+12% عن الأسبوع الماضي</span>
-        </div>
       </Card>
 
       <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800">
@@ -103,10 +99,6 @@ export default function MetricsDisplayPage() {
           <div className="bg-red-500/20 p-3 rounded-xl">
             <AlertCircle className="w-6 h-6 text-red-600" />
           </div>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-red-600">
-          <TrendingUp className="w-3 h-3" />
-          <span>+8% عن الأسبوع الماضي</span>
         </div>
       </Card>
 
@@ -120,10 +112,6 @@ export default function MetricsDisplayPage() {
             <Stethoscope className="w-6 h-6 text-purple-600" />
           </div>
         </div>
-        <div className="flex items-center gap-2 text-xs text-purple-600">
-          <TrendingUp className="w-3 h-3" />
-          <span>+15% عن الأسبوع الماضي</span>
-        </div>
       </Card>
 
       <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
@@ -135,10 +123,6 @@ export default function MetricsDisplayPage() {
           <div className="bg-green-500/20 p-3 rounded-xl">
             <Users className="w-6 h-6 text-green-600" />
           </div>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-green-600">
-          <TrendingUp className="w-3 h-3" />
-          <span>+23% عن الأسبوع الماضي</span>
         </div>
       </Card>
     </div>
@@ -241,22 +225,21 @@ export default function MetricsDisplayPage() {
 
         {/* Additional Insights */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
-            <h3 className="text-lg font-black text-blue-900 dark:text-blue-100 mb-3">متوسط الإقامة</h3>
-            <div className="text-3xl font-black text-blue-600 mb-2">4.8 أيام</div>
-            <p className="text-sm text-blue-700 dark:text-blue-300">متوسط مدة بقاء المرضى في المستشفى</p>
-          </Card>
-
-          <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
-            <h3 className="text-lg font-black text-purple-900 dark:text-purple-100 mb-3">نسبة النجاح</h3>
-            <div className="text-3xl font-black text-purple-600 mb-2">96.5%</div>
-            <p className="text-sm text-purple-700 dark:text-purple-300">نسبة نجاح العمليات الجراحية</p>
-          </Card>
-
           <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20">
-            <h3 className="text-lg font-black text-green-900 dark:text-green-100 mb-3">معدل الشفاء</h3>
-            <div className="text-3xl font-black text-green-600 mb-2">92.3%</div>
-            <p className="text-sm text-green-700 dark:text-green-300">نسبة المرضى الذين تم شفاؤهم</p>
+            <h3 className="text-lg font-black text-green-900 dark:text-green-100 mb-3">معدل التحسن</h3>
+            <div className="text-3xl font-black text-green-600 mb-2">
+              {hospitalMetricsData?.dischargeReasons ? 
+                `${((hospitalMetricsData.dischargeReasons.improved / (hospitalMetricsData.archivedPatients || 1)) * 100).toFixed(1)}%`
+                : '0%'
+              }
+            </div>
+            <p className="text-sm text-green-700 dark:text-green-300">نسبة المرضى الذين خرجوا بحالة محسنة</p>
+          </Card>
+
+          <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20">
+            <h3 className="text-lg font-black text-blue-900 dark:text-blue-100 mb-3">إجمالي الأقسام</h3>
+            <div className="text-3xl font-black text-blue-600 mb-2">{hospitalMetricsData?.patientsByDepartment?.length || 0}</div>
+            <p className="text-sm text-blue-700 dark:text-blue-300">عدد الأقسام النشطة في المستشفى</p>
           </Card>
         </div>
       </div>
