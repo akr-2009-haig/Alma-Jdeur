@@ -515,8 +515,19 @@ export async function registerRoutes(
     try {
       const discussionId = parseInt(req.params.id);
       
-      // Note: In a real app, you'd fetch the comment first to check ownership
-      // For now, assuming permission check is done at the frontend level
+      // Fetch the comment to check ownership
+      const allComments = await hospitalData.retrieveDiscussions(0); // This will need to be improved
+      const comment = allComments.find((c: any) => c.id === discussionId);
+      
+      if (!comment) {
+        return res.status(404).json({ message: 'التعليق غير موجود' });
+      }
+
+      // Check permissions
+      const currentSurgeon = req.session.surgeonInfo!;
+      if (currentSurgeon.role !== 'head_of_department' && currentSurgeon.id !== comment.authorId) {
+        return res.status(403).json({ message: 'ليس لديك صلاحية لحذف هذا التعليق' });
+      }
       
       await hospitalData.removeDiscussion(discussionId);
       res.status(204).send();

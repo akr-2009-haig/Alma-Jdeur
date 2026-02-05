@@ -8,12 +8,17 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Activity, Users, AlertCircle, UserPlus, BarChart3, Archive, MessageSquare, Stethoscope, Briefcase } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-const transformMetricsToBoxes = (metricsPayload: any) => [
-  { labelText: 'الحالات النشطة', valueNum: metricsPayload?.activePatients ?? 0, IconRef: Activity, gradientClasses: 'from-cyan-400 via-blue-500 to-indigo-600', descriptionText: 'مريض تحت الرعاية' },
-  { labelText: 'حالات الطوارئ', valueNum: metricsPayload?.emergencyCases ?? 0, IconRef: AlertCircle, gradientClasses: 'from-rose-400 via-red-500 to-pink-600', descriptionText: 'حالة عاجلة' },
-  { labelText: 'عمليات اليوم', valueNum: metricsPayload?.todayOperations ?? 0, IconRef: Stethoscope, gradientClasses: 'from-purple-400 via-violet-500 to-fuchsia-600', descriptionText: 'عملية جراحية' },
-  { labelText: 'إجمالي المرضى', valueNum: metricsPayload?.totalPatients ?? 0, IconRef: Users, gradientClasses: 'from-emerald-400 via-green-500 to-teal-600', descriptionText: 'سجل كامل' },
-];
+const transformMetricsToBoxes = (metricsPayload: any) => {
+  const emergencyCount = (metricsPayload?.patientsByDepartment || [])
+    .find((d: any) => d.department === 'emergency')?.count || 0;
+  
+  return [
+    { labelText: 'الحالات النشطة', valueNum: metricsPayload?.activePatients ?? 0, IconRef: Activity, gradientClasses: 'from-cyan-400 via-blue-500 to-indigo-600', descriptionText: 'مريض تحت الرعاية' },
+    { labelText: 'حالات الطوارئ', valueNum: emergencyCount, IconRef: AlertCircle, gradientClasses: 'from-rose-400 via-red-500 to-pink-600', descriptionText: 'حالة عاجلة' },
+    { labelText: 'الحالات المؤرشفة', valueNum: metricsPayload?.archivedPatients ?? 0, IconRef: Stethoscope, gradientClasses: 'from-purple-400 via-violet-500 to-fuchsia-600', descriptionText: 'حالة مخرجة' },
+    { labelText: 'إجمالي المرضى', valueNum: metricsPayload?.totalPatients ?? 0, IconRef: Users, gradientClasses: 'from-emerald-400 via-green-500 to-teal-600', descriptionText: 'سجل كامل' },
+  ];
+};
 
 const buildNavigationButtons = () => [
   { IconRef: UserPlus, textLabel: 'تسجيل مريض', routePath: '/cases', backgroundClass: 'bg-emerald-600' },

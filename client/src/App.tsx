@@ -70,7 +70,7 @@ function HospitalRegistryApp() {
             <Route path="/cases">
               <AccessBoundary><CasesManagementPage /></AccessBoundary>
             </Route>
-            <Route path="/case/:caseId">
+            <Route path="/case/:id">
               <AccessBoundary><CaseProfilePage /></AccessBoundary>
             </Route>
             <Route path="/discharged">

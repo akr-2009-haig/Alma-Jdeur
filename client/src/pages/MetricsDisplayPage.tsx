@@ -6,8 +6,6 @@ import { BarChart3, TrendingUp, Activity, Users, AlertCircle, Stethoscope, Calen
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
   PieChart,
   Pie,
   Cell,
@@ -25,24 +23,19 @@ const generateColorPalette = () => [
 
 const constructBarChartData = (metricsPayload: any) => [
   { category: 'الحالات النشطة', quantity: metricsPayload?.activePatients || 0 },
-  { category: 'حالات الطوارئ', quantity: metricsPayload?.emergencyCases || 0 },
-  { category: 'عمليات اليوم', quantity: metricsPayload?.todayOperations || 0 },
+  { category: 'الحالات المؤرشفة', quantity: metricsPayload?.archivedPatients || 0 },
   { category: 'إجمالي المرضى', quantity: metricsPayload?.totalPatients || 0 },
 ];
 
 const constructPieChartData = (metricsPayload: any) => [
   { label: 'الحالات النشطة', value: metricsPayload?.activePatients || 0 },
-  { label: 'حالات الطوارئ', value: metricsPayload?.emergencyCases || 0 },
-  { label: 'عمليات اليوم', value: metricsPayload?.todayOperations || 0 },
+  { label: 'الحالات المؤرشفة', value: metricsPayload?.archivedPatients || 0 },
 ];
 
-const constructTrendData = () => {
-  const weekDays = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-  return weekDays.map((day, idx) => ({
-    day,
-    patients: Math.floor(Math.random() * 50) + 20,
-    emergencies: Math.floor(Math.random() * 15) + 5,
-    operations: Math.floor(Math.random() * 10) + 3,
+const constructDepartmentChartData = (metricsPayload: any) => {
+  return (metricsPayload?.patientsByDepartment || []).map((dept: any) => ({
+    department: dept.department,
+    count: dept.count
   }));
 };
 
@@ -76,10 +69,14 @@ export default function MetricsDisplayPage() {
 
   const barChartDataSet = constructBarChartData(hospitalMetricsData);
   const pieChartDataSet = constructPieChartData(hospitalMetricsData);
-  const trendDataSet = constructTrendData();
+  const departmentChartData = constructDepartmentChartData(hospitalMetricsData);
   const chartColorPalette = generateColorPalette();
 
-  const renderStatisticsOverviewCards = () => (
+  const renderStatisticsOverviewCards = () => {
+    const emergencyDeptCount = (hospitalMetricsData?.patientsByDepartment || [])
+      .find((d: any) => d.department === 'emergency')?.count || 0;
+    
+    return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
       <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
         <div className="flex justify-between items-start mb-4">
@@ -100,8 +97,8 @@ export default function MetricsDisplayPage() {
       <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 border-red-200 dark:border-red-800">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <div className="text-4xl font-black text-red-600 mb-2">{hospitalMetricsData?.emergencyCases || 0}</div>
-            <div className="text-sm font-semibold text-red-800 dark:text-red-200">حالات الطوارئ</div>
+            <div className="text-4xl font-black text-red-600 mb-2">{emergencyDeptCount}</div>
+            <div className="text-sm font-semibold text-red-800 dark:text-red-200">قسم الطوارئ</div>
           </div>
           <div className="bg-red-500/20 p-3 rounded-xl">
             <AlertCircle className="w-6 h-6 text-red-600" />
@@ -116,8 +113,8 @@ export default function MetricsDisplayPage() {
       <Card className="p-6 rounded-2xl border-2 shadow-lg bg-gradient-to-br from-purple-50 to-fuchsia-50 dark:from-purple-900/20 dark:to-fuchsia-900/20 border-purple-200 dark:border-purple-800">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <div className="text-4xl font-black text-purple-600 mb-2">{hospitalMetricsData?.todayOperations || 0}</div>
-            <div className="text-sm font-semibold text-purple-800 dark:text-purple-200">عمليات اليوم</div>
+            <div className="text-4xl font-black text-purple-600 mb-2">{hospitalMetricsData?.archivedPatients || 0}</div>
+            <div className="text-sm font-semibold text-purple-800 dark:text-purple-200">الحالات المؤرشفة</div>
           </div>
           <div className="bg-purple-500/20 p-3 rounded-xl">
             <Stethoscope className="w-6 h-6 text-purple-600" />
@@ -146,6 +143,7 @@ export default function MetricsDisplayPage() {
       </Card>
     </div>
   );
+};
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6" dir="rtl">
@@ -219,13 +217,13 @@ export default function MetricsDisplayPage() {
           </Card>
         </div>
 
-        {/* Line Chart - Weekly Trends */}
+        {/* Department Distribution */}
         <Card className="p-6 rounded-2xl border-2 shadow-lg">
-          <h2 className="text-2xl font-black text-slate-900 dark:text-slate-50 mb-6">الاتجاهات الأسبوعية</h2>
+          <h2 className="text-2xl font-black text-slate-900 dark:text-slate-50 mb-6">توزيع المرضى حسب الأقسام</h2>
           <ResponsiveContainer width="100%" height={400}>
-            <LineChart data={trendDataSet}>
+            <BarChart data={departmentChartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-              <XAxis dataKey="day" stroke="#64748b" style={{ fontSize: '12px' }} />
+              <XAxis dataKey="department" stroke="#64748b" style={{ fontSize: '12px' }} />
               <YAxis stroke="#64748b" style={{ fontSize: '12px' }} />
               <Tooltip
                 contentStyle={{
@@ -236,10 +234,8 @@ export default function MetricsDisplayPage() {
                 }}
               />
               <Legend />
-              <Line type="monotone" dataKey="patients" stroke="#3b82f6" strokeWidth={3} dot={{ r: 5 }} name="المرضى" />
-              <Line type="monotone" dataKey="emergencies" stroke="#ef4444" strokeWidth={3} dot={{ r: 5 }} name="الطوارئ" />
-              <Line type="monotone" dataKey="operations" stroke="#8b5cf6" strokeWidth={3} dot={{ r: 5 }} name="العمليات" />
-            </LineChart>
+              <Bar dataKey="count" fill="#6366f1" radius={[8, 8, 0, 0]} name="عدد المرضى" />
+            </BarChart>
           </ResponsiveContainer>
         </Card>
 
